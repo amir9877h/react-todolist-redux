@@ -5,8 +5,8 @@ import { selectTodos } from './todosSlice'
 const TodoList = () => {
     const todos = useSelector(selectTodos)
 
-    const renderedListItems = todos.map((todo) => {
-        return <TodoListItem key={todo.id} todo={todo} />
+    const renderedListItems = Object.keys(todos).map((todoId) => {
+        return <TodoListItem key={todoId} todo={todos[todoId]} />
     })
 
     return <ul className="todo-list">{renderedListItems}</ul>

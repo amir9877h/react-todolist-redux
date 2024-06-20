@@ -1,11 +1,12 @@
 const initState = {
-    entities: [
-        { id: 1, text: 'Deign ui', completed: true, color: 'red' },
-        { id: 2, text: 'discover state', completed: false },
-        { id: 3, text: 'discover actions', completed: false },
-        { id: 4, text: 'implement reducer', completed: false, color: 'blue' },
-        { id: 5, text: 'Complete patterns', completed: false, color: 'red' },
-    ]
+    entities: {
+        1: { id: 1, text: 'Deign ui', completed: true, color: 'red' },
+        2: { id: 2, text: 'discover state', completed: false },
+        3: { id: 3, text: 'discover actions', completed: false },
+        4: { id: 4, text: 'implement reducer', completed: false, color: 'blue' },
+        5: { id: 5, text: 'Complete patterns', completed: false, color: 'red' },
+    }
+
 }
 
 export default function todosReducer(state = initState, action) {
@@ -14,32 +15,49 @@ export default function todosReducer(state = initState, action) {
             const todo = action.payload
             return {
                 ...state,
-                entities: [
+                entities: {
                     ...state.entities,
-                    todo
-                ]
+                    [todo.id]: todo
+                }
             }
 
         case 'todos/todoToggled':
             const toggledTodoId = action.payload
+            // return {
+            //     ...state,
+            //     entities: state.entities.map(todo => {
+            //         if (todo.id === toggledTodoId) {
+            //             return {
+            //                 ...todo,
+            //                 completed: !todo.completed
+            //             }
+            //         }
+
+            //         return todo
+            //     })
+            // }
+            const todoToggled = state.entities[toggledTodoId]
             return {
                 ...state,
-                entities: state.entities.map(todo => {
-                    if (todo.id === toggledTodoId) {
-                        return {
-                            ...todo,
-                            completed: !todo.completed
-                        }
+                entities: {
+                    ...state.entities,
+                    [toggledTodoId]: {
+                        ...todoToggled,
+                        completed: !todoToggled.completed
                     }
-
-                    return todo
-                })
+                }
             }
         case 'todos/todoDeleted':
             const deletedTodoId = action.payload
+            // return {
+            //     ...state,
+            //     entities: state.entities.filter(todo => todo.id !== deletedTodoId)
+            // }
+            const entities = { ...state.entities }
+            delete entities[deletedTodoId]
             return {
                 ...state,
-                entities: state.entities.filter(todo => todo.id !== deletedTodoId)
+                entities
             }
         default:
             return state
@@ -49,6 +67,16 @@ export default function todosReducer(state = initState, action) {
 export const todoAdded = (text) => ({
     type: 'todos/todoAdded',
     payload: { id: 6, text, completed: false }
+})
+
+export const todoToggled = (todoId) => ({
+    type: 'todos/todoToggled',
+    payload: todoId
+})
+
+export const todoDeleted = (todoId) => ({
+    type: 'todos/todoDeleted',
+    payload: todoId
 })
 
 export const selectTodos = state => state.todos.entities

@@ -1,10 +1,14 @@
+import { useDispatch } from 'react-redux'
 import { ReactComponent as TimesSolid } from './times-solid.svg'
+import { todoToggled, todoDeleted } from './todosSlice'
 
 
 export const availableColors = ['green', 'blue', 'orange', 'purple', 'red']
 export const capitalize = (s) => s[0].toUpperCase() + s.slice(1)
 
 const TodoListItem = ({ todo }) => {
+
+    const dispatch = useDispatch()
 
     const { text, completed, color } = todo
     const colorOptions = availableColors.map((c) => (
@@ -13,6 +17,13 @@ const TodoListItem = ({ todo }) => {
         </option>
     ))
 
+    function handleCompletedChanged() {
+        dispatch(todoToggled(todo.id))
+    }
+
+    function handleDelete() {
+        dispatch(todoDeleted(todo.id))
+    }
     return (
         <li>
             <div className="view">
@@ -20,7 +31,8 @@ const TodoListItem = ({ todo }) => {
                     <input
                         className="toggle"
                         type="checkbox"
-
+                        checked={completed}
+                        onClick={handleCompletedChanged}
                     />
                     <div className="todo-text">{text}</div>
                 </div>
@@ -34,7 +46,7 @@ const TodoListItem = ({ todo }) => {
                         <option value=""></option>
                         {colorOptions}
                     </select>
-                    <button className="destroy" >
+                    <button className="destroy" onClick={handleDelete}>
                         <TimesSolid />
                     </button>
                 </div>
